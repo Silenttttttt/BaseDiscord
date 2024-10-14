@@ -30,7 +30,7 @@ cd BaseDiscord
 
 To encode binary data, use the `encode_custom` function:
 
-```
+```python
 from base_discord import encode_custom
 
 data = b'\x00\x01\x02'  # Example binary data
@@ -42,7 +42,7 @@ print(f"Encoded message: {encoded_message}")
 
 To decode an encoded message back into binary data, use the `decode_custom` function:
 
-```
+```python
 from base_discord import decode_custom
 
 encoded_message = "B|A"  # Example encoded message
