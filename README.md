@@ -1,6 +1,6 @@
 # BaseDiscord
 
-A Python implementation of an encoding and decoding algorithm using a custom character set. This library is optimized for safe transmission over Discord, ensuring that encoded messages fit within Discord's character limits and avoid conflicts with emoji syntax.
+A Python implementation of an encoding and decoding algorithm using a custom character set. This library is optimized for safe transmission over Discord, ensuring that encoded messages fit within Discord's character limits and avoid conflicts with markdown and emoji syntax.
 
 ## Features
 
