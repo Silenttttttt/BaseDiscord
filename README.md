@@ -4,18 +4,18 @@ A Python implementation of an encoding and decoding algorithm using a custom cha
 
 ## Features
 
-- Custom character set supporting 1,024 Unicode characters.
+- Custom character set supporting 1,679 Unicode characters.
 - Efficient encoding and decoding of binary data.
 - Handles zero bytes and large data sequences.
 - Ensures encoded messages are compatible with Discord's character limits.
-- Average expansion ratio of approximately 75%.
-
+- Average compression ratio of approximately 75%, this is data dependent, and can be further compressed with other compression algorithms.
+- Optimized for discord messages, to allow efficient encoding of data through a discord message.
 ## Installation
 
 Clone the repository to your local machine:
 
 ```
-git clone https://github.com/yourusername/BaseDiscord.git
+git clone https://github.com/Silenttttttt/BaseDiscord.git
 ```
 
 Navigate to the project directory:
@@ -72,12 +72,8 @@ To perform the CHARSET verification:
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue to discuss improvements or report bugs.
+Contributions are welcome! Please feel free to submit a pull request or open an issue to discuss improvements or report bugs. Or directly contact me.
 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For questions or feedback, please contact [your email or GitHub profile].
