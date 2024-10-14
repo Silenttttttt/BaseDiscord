@@ -68,7 +68,7 @@ The `main` function in `base_discord.py` includes comprehensive tests:
 To perform the CHARSET verification:
 - Run the script and follow the prompts to copy the encoded message.
 - Paste the message into Discord and copy it back.
-- Paste the copied message into the terminal to verify the decoding.
+- Paste the copied message into the terminal to verify the encoding and decoding through discord.
 
 ## Contributing
 
