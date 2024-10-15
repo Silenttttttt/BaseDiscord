@@ -4,7 +4,7 @@ A Python implementation of an encoding and decoding algorithm using a custom cha
 
 ## Features
 
-- Custom character set supporting 1,678 Unicode characters.
+- Custom character set supporting 1,674 Unicode characters.
 - Efficient encoding and decoding of binary data.
 - Handles zero bytes and large data sequences.
 - Ensures encoded messages are compatible with Discord's character limits.
