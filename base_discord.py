@@ -14,8 +14,13 @@ CHARSET = (
     + ''.join(chr(i) for i in range(0x2100, 0x214F))  # Letterlike Symbols
     + ''.join(chr(i) for i in range(0x2190, 0x21FF))  # Arrows
 )
+
+# Remove specific characters from the CHARSET
+CHARSET = CHARSET.replace("↔", "").replace("Ň", "").replace("Ú", "").replace("⇔", "")
+
 SEPARATOR = '|'
 BASE = len(CHARSET)
+print("BASE: ", BASE)
 
 def encode_bytes(data: bytes) -> str:
     """Encodes bytes into a string using the custom character set."""
