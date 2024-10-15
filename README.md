@@ -4,11 +4,11 @@ A Python implementation of an encoding and decoding algorithm using a custom cha
 
 ## Features
 
-- Custom character set supporting 1,679 Unicode characters.
+- Custom character set supporting 1,674 Unicode characters.
 - Efficient encoding and decoding of binary data.
 - Handles zero bytes and large data sequences.
 - Ensures encoded messages are compatible with Discord's character limits.
-- Average compression ratio of approximately 75%, this is data dependent, and can be further compressed with other compression algorithms.
+- Average compression ratio of approximately 80%, this is data dependent, and can be further compressed with other compression algorithms.
 - Optimized for discord messages, to allow efficient encoding of data through a discord message.
 - Checksum Verification: Uses SHA-256 to ensure data integrity during encoding and decoding.
 - Maximum Length Flag: Optionally specify a maximum length for encoded messages to prevent exceeding character limits.
@@ -48,7 +48,7 @@ To decode an encoded message back into binary data, use the `decode_custom` func
 ```python
 from base_discord import decode_custom
 
-encoded_message = "B|A"  # Example encoded message
+encoded_message = "Ƭẳ։mΎℱẻĝΑԭӗɥҔӵEφɇȺỰ⅄ŜüĹҩ|B|A"  # Example encoded message
 decoded_data = decode_custom(encoded_message)
 print(f"Decoded data: {decoded_data}")
 ```
