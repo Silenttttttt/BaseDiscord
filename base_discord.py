@@ -20,7 +20,7 @@ CHARSET = CHARSET.replace("↔", "").replace("Ň", "").replace("Ú", "").replace
 
 SEPARATOR = '|'
 BASE = len(CHARSET)
-print("BASE: ", BASE)
+
 
 def encode_bytes(data: bytes) -> str:
     """Encodes bytes into a string using the custom character set."""
