@@ -48,7 +48,7 @@ To decode an encoded message back into binary data, use the `decode_custom` func
 ```python
 from base_discord import decode_custom
 
-encoded_message = "B|A"  # Example encoded message
+encoded_message = "Ƭẳ։mΎℱẻĝΑԭӗɥҔӵEφɇȺỰ⅄ŜüĹҩ|B|A"  # Example encoded message
 decoded_data = decode_custom(encoded_message)
 print(f"Decoded data: {decoded_data}")
 ```
