@@ -8,7 +8,7 @@ A Python implementation of an encoding and decoding algorithm using a custom cha
 - Efficient encoding and decoding of binary data.
 - Handles zero bytes and large data sequences.
 - Ensures encoded messages are compatible with Discord's character limits.
-- Average compression ratio of approximately 75%, this is data dependent, and can be further compressed with other compression algorithms.
+- Average compression ratio of approximately 80%, this is data dependent, and can be further compressed with other compression algorithms.
 - Optimized for discord messages, to allow efficient encoding of data through a discord message.
 - Checksum Verification: Uses SHA-256 to ensure data integrity during encoding and decoding.
 - Maximum Length Flag: Optionally specify a maximum length for encoded messages to prevent exceeding character limits.
