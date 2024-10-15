@@ -1,9 +1,9 @@
-import math
+import hashlib
 
 # Define the verified character set, excluding unsupported characters
 CHARSET = (
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    "!@#$%^&()_-+={}[];'\"<>,.?/|~ "
+    "!@#$%^&()_-+={}[];'\"<>,.?/~ "
     + ''.join(chr(i) for i in range(0x00A1, 0x02FF))  # Latin Extended and more
     + ''.join(chr(i) for i in range(0x0370, 0x03FF))  # Greek and Coptic
     + ''.join(chr(i) for i in range(0x0400, 0x0485))  # Cyrillic, excluding U+0486 and U+0487
@@ -14,30 +14,12 @@ CHARSET = (
     + ''.join(chr(i) for i in range(0x2100, 0x214F))  # Letterlike Symbols
     + ''.join(chr(i) for i in range(0x2190, 0x21FF))  # Arrows
 )
+SEPARATOR = '|'
 BASE = len(CHARSET)
-print(BASE)
 
-def encode_custom(data: bytes) -> str:
-    """
-    Encodes binary data into a string using a custom base encoding scheme.
-
-    Args:
-        data (bytes): The binary data to encode.
-
-    Returns:
-        str: The encoded string using the custom character set.
-    """
-    # Convert the binary data to an integer
+def encode_bytes(data: bytes) -> str:
+    """Encodes bytes into a string using the custom character set."""
     num = int.from_bytes(data, byteorder='big')
-    
-    # Encode the length of the data
-    length_encoded = []
-    length = len(data)
-    while length > 0:
-        length, rem = divmod(length, BASE)
-        length_encoded.append(CHARSET[rem])
-    
-    # Convert the integer to a base-N string, where N is the size of the CHARSET
     encoded = []
     if num == 0:
         encoded.append(CHARSET[0])  # Use the first character to represent zero
@@ -45,9 +27,41 @@ def encode_custom(data: bytes) -> str:
         while num > 0:
             num, rem = divmod(num, BASE)
             encoded.append(CHARSET[rem])
+    return ''.join(reversed(encoded))
+
+def encode_custom(data: bytes, max_length: int = None) -> str:
+    """
+    Encodes binary data into a string using a custom base encoding scheme.
+
+    Args:
+        data (bytes): The binary data to encode.
+        max_length (int, optional): The maximum allowed length of the encoded string. 
+                                    If None, no length check is performed.
+
+    Returns:
+        str: The encoded string using the custom character set.
+
+    Raises:
+        ValueError: If the encoded string exceeds the specified max_length.
+    """
+    # Calculate and encode the checksum
+    checksum = hashlib.sha256(data).digest()
+    checksum_encoded = encode_bytes(checksum)
     
-    # Reverse the encoded lists and join to form the final string
-    return ''.join(reversed(length_encoded)) + '|' + ''.join(reversed(encoded))
+    # Encode the length of the data
+    length_encoded = encode_bytes(len(data).to_bytes(2, byteorder='big'))
+    
+    # Encode the data
+    data_encoded = encode_bytes(data)
+    
+    # Join to form the final string
+    encoded_message = checksum_encoded + SEPARATOR + length_encoded + SEPARATOR + data_encoded
+    
+    # Check if the encoded message exceeds the max_length
+    if max_length is not None and len(encoded_message) > max_length:
+        raise ValueError(f"Encoded message exceeds the maximum length of {max_length} characters.")
+    
+    return encoded_message
 
 def decode_custom(encoded: str) -> bytes:
     """
@@ -59,24 +73,33 @@ def decode_custom(encoded: str) -> bytes:
     Returns:
         bytes: The original binary data.
     """
-    # Split the encoded string into length and data parts
-    length_part, data_part = encoded.split('|', 1)
+    # Split the encoded string into checksum, length, and data parts
+    checksum_part, length_part, data_part = encoded.split(SEPARATOR, 2)
+    
+    # Decode the checksum
+    checksum_num = 0
+    for char in checksum_part:
+        checksum_num = checksum_num * BASE + CHARSET.index(char)
+    checksum = checksum_num.to_bytes(32, byteorder='big')  # SHA-256 produces a 32-byte hash
     
     # Decode the length
-    length = 0
+    length_num = 0
     for char in length_part:
-        length = length * BASE + CHARSET.index(char)
+        length_num = length_num * BASE + CHARSET.index(char)
+    length = length_num.to_bytes(2, byteorder='big')
     
-    # Convert the base-N string back to an integer
+    # Decode the data
     num = 0
     if data_part == CHARSET[0]:
         num = 0  # Handle the zero case
     else:
         for char in data_part:
             num = num * BASE + CHARSET.index(char)
+    data = num.to_bytes(int.from_bytes(length, byteorder='big'), byteorder='big')
     
-    # Convert the integer back to bytes
-    data = num.to_bytes(length, byteorder='big')
+    # Verify the checksum
+    if hashlib.sha256(data).digest() != checksum:
+        raise ValueError("Checksum does not match, data may be corrupted.")
     
     return data
 
@@ -90,18 +113,22 @@ if __name__ == "__main__":
     expansion_ratio = len(encoded_message) / len(original_data)
     print(f"Expansion ratio: {expansion_ratio:.2%}")
 
-    # Ensure the encoded message fits within Discord's character limit
-    if len(encoded_message) <= 2000:
-        print("The message fits within Discord's character limit.")
+
 
     # Test encoding and decoding of individual bytes
     for byte in original_data:
-        encoded_byte = encode_custom(bytes([byte]))
-        decoded_byte = decode_custom(encoded_byte)
-        
-        # Print results for each byte
-        if decoded_byte != bytes([byte]):
-            print(f"Mismatch: Original byte: {byte}, Decoded byte: {decoded_byte}")
+        try:
+            # Encode the single byte
+            encoded_byte = encode_custom(bytes([byte]))
+            
+            # Decode the encoded byte
+            decoded_byte = decode_custom(encoded_byte)
+            
+            # Verify the decoded byte matches the original byte
+            if decoded_byte != bytes([byte]):
+                print(f"Mismatch: Original byte: {byte}, Decoded byte: {decoded_byte}")
+        except Exception as e:
+            print(f"Error with byte {byte}: {e}")
 
     print("Encoded message: ", encoded_message)
     user_input = input("Enter the encoded message: ")
@@ -114,7 +141,7 @@ if __name__ == "__main__":
     print("Encoded message length: ", len(user_input))
     print("Original data length: ", len(original_data))
 
-       # Encode and verify each third of the CHARSET
+    # Encode and verify each third of the CHARSET
     print("\nEncoding and verifying each third of the CHARSET:")
     third_length = len(CHARSET) // 3
 
